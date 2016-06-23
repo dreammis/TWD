@@ -1,6 +1,12 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
+from registration.backends.simple.views import RegistrationView
+
+class MyRegistraionView(RegistrationView):
+    def get_success_url(self, request, user):
+        return '/rango/'
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -9,6 +15,8 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^rango/', include('rango.urls')), # ADD THIS NEW TUPLE!
+    url(r'^accounts/register/$', MyRegistraionView.as_view(),name='registration_register'),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
 )
 
 
