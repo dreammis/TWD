@@ -1,5 +1,6 @@
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
+from .bing_search import run_query
 from .models import Category,Page
 from .forms import CategoryForm,PageForm
 
@@ -7,6 +8,9 @@ def index(request):
     category_list = Category.objects.order_by('-likes')[:5]
     context_dict = {'categories': category_list}
     return render_to_response('rango/index.html', context_dict)
+
+def about(request):
+    return render(request,"rango/about.html",{'context':'Rango says here is the about page.'})
 
 
 def category(request,category_name_slug):
@@ -64,3 +68,17 @@ def add_page(request,category_name_slug):
     context_dict = {'form':form, 'category': cat}
 
     return render(request, 'rango/add_page.html', context_dict)
+
+
+def search(request):
+
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            # Run our Bing function to get the results list!
+            result_list = run_query(query)
+
+    return render(request, 'rango/search.html', {'result_list': result_list})
